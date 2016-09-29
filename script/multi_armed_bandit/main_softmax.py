@@ -6,7 +6,7 @@ import numpy as np
 from src.multi_armed_bandit.Environment import Environment
 from src.multi_armed_bandit.EstimateQValueWithMean import EstimateQValueWithMean
 from src.multi_armed_bandit.PolicySoftMax import PolicySoftMax
-from src.q_learning.Agent import Agent
+from src.reinforcement_agents.AgentQLearning import AgentQLearning
 
 
 def do_1_episode(loop_num, temperature, seed):
@@ -22,9 +22,9 @@ def do_1_episode(loop_num, temperature, seed):
     for action in list_possible_action:
         action_map_qobj[action] = {'q_value': 0, 'n': 0}
 
-    agent = Agent(estimate_q_value_cls=EstimateQValueWithMean,
-                  policy_cls=PolicySoftMax(t=temperature),
-                  action_map_qobj=action_map_qobj)
+    agent = AgentQLearning(estimate_q_value_cls=EstimateQValueWithMean,
+                           policy_cls=PolicySoftMax(t=temperature),
+                           action_map_qobj=action_map_qobj)
 
     for i in range(loop_num):
         action = agent.select_action()

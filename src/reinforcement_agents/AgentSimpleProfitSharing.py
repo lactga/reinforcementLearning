@@ -1,29 +1,28 @@
-class Agent():
+from src.AbstractAgent import AbstractAgent
+
+
+class AgentSimpleProfitSharing(AbstractAgent):
     """
-    Q学習アルゴリズムのエージェントクラス
+    シンプルProfitSharingアルゴリズムのエージェントクラス
     """
-    def __init__(self, policy_cls, alpha=0.1, gamma=0.99):
+    def __init__(self, policy_cls, cbid=0.1):
         """
         インストラクタ
         :param policy_cls: ポリシークラスのインスタンス
-        :param alpha: 学習率
+        :param cbid: bid率
         """
         self.status_map_action_map_qobj = {}
         self.policy_cls = policy_cls
-        self.alpha = alpha
-        self.gamma = gamma
-        self.recent_action = None
-        self.prev_action = None
-        self.prev_status = None
+        self.cbid = cbid
+        self.episode = 0
+        self.list_selected_rule = []
 
     def reset_episode(self):
         """
-        エピソードの新しく始めるため、内部状態をリセットする
+        エピソードを新しく始めるため、内部状態をリセットする
         :return:
         """
-        self.recent_action = None
-        self.prev_action = None
-        self.prev_status = None
+        self.list_selected_rule = []
 
     def observe(self, status, reward, set_available_action):
         """
@@ -37,35 +36,31 @@ class Agent():
         if not status in self.status_map_action_map_qobj:
             self._init_qobj(status=status, set_available_action=set_available_action)
 
-        # 最初の観測でない場合、Q値の更新を行う
-        if self.prev_status is not None:
-            self.train(status=status, reward=reward)
+        # 最初の観測でない、かつ報酬を得た場合、Q値の更新を行う
+        if reward and self.list_selected_rule:
+            self.train(reward=reward)
+            self.list_selected_rule = []
 
         # 行動を選択する
         action = self.select_action(status=status)
-        self.prev_status = status
-        self.prev_action = action
+        self.list_selected_rule.append([status, action])
+        self.episode += 1
         return action
 
-    def train(self, status, reward):
+    def train(self, reward):
         """
         学習を行う
-        :param status: 状態
         :param reward: 報酬
         :return:
         """
-        action_map_qobj = self.status_map_action_map_qobj[status]
+        for i, rule in enumerate(self.list_selected_rule):
+            status, action = rule
+            q_obj = self.status_map_action_map_qobj[status][action]
 
-        prev_action_map_qobj = self.status_map_action_map_qobj[self.prev_status]
-        prev_q_obj = prev_action_map_qobj[self.prev_action]
+            r = self.reward_function(t=i, episode=self.episode, reward=reward)
 
-        # 終端の場合、action_map_qobjが空
-        if action_map_qobj:
-            max_q_value = max([qobj['q_value'] for qobj in action_map_qobj.values()])
-        else:
-            max_q_value = 0
-        prev_q_obj['q_value'] += self.alpha * (reward + self.gamma * max_q_value - prev_q_obj['q_value'])
-        prev_q_obj['n'] += 1
+            q_obj['q_value'] += self.cbid * (r - q_obj['q_value'])
+            q_obj['n'] += 1
 
     def select_action(self, status):
         """
@@ -92,3 +87,14 @@ class Agent():
         action_map_qobj = self.status_map_action_map_qobj[status]
         for action in set_available_action:
             action_map_qobj[action] = {'q_value': 0, 'n': 0}
+
+    @staticmethod
+    def reward_function(t, episode, reward):
+        """
+        報酬関数（時間によらず一定の場合）
+        :param t:
+        :param episode:
+        :param reward:
+        :return:
+        """
+        return reward

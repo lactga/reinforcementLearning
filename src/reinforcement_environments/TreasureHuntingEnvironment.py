@@ -1,22 +1,23 @@
-import random
 from src.AbstractEnvironment import AbstractEnvironment
 from src.utils.Utils import Utils
 
 
-class Environment(AbstractEnvironment):
+class TreasureHuntingEnvironment(AbstractEnvironment):
     """
-    Q学習の環境クラス
+    宝探しの環境クラス
     """
-    def __init__(self):
+    def __init__(self, p=0.9, reward=10):
         """
         インストラクタ
+        :param p: 思い通りの方向に進める確率
+        :param reward: 報酬額
         """
-        p = 0.9
-        reward = 10
 
         super().__init__()
+        self.p = p
+        self.reward = reward
+
         self.status = '入口'
-        self.reward = 0
         self.list_possible_action = ['西', '東']
 
         self.state_transition_table = {
@@ -41,13 +42,19 @@ class Environment(AbstractEnvironment):
     def proceed_with_step(self, action):
         """
         行動に応じてステップを進め、環境を遷移させ、報酬を発生させ、可能な行動を求める
-        :return:
+        :param action: エージェントの行動
+        :return: None
         """
         self.t += 1
+
+        # 環境遷移
         dic_transition = self.state_transition_table[self.status][action]
         self.status = Utils.Random.choice(*zip(*list(dic_transition.items())))
+
+        # 報酬テーブルから報酬を発生させる
         self.reward = self.reward_table.get(self.status, 0)
 
-        # 報酬が発生したらエピソード終了
+        # 報酬が発生したらエピソード終了。その他の場合は可能な行動は変化しない。
         if self.reward:
             self.list_possible_action = []
+
