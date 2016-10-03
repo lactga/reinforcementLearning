@@ -30,19 +30,19 @@ class Main:
         status = self.environment.get_status()
         reward = self.environment.get_reward()
         action = None
-        set_available_action = set(self.environment.get_list_possible_action())
+        available_action_set = set(self.environment.get_list_possible_action())
 
         while True:
             if is_print_action:
-                print('prev_action:{}, status:{}, reward:{}, set_available_action={}'.format(
-                    action, status, reward, set_available_action))
-            action = self.agent.observe(status=status, reward=reward, set_available_action=set_available_action)
+                print('prev_action:{}, status:{}, reward:{}, available_action_set={}'.format(
+                    action, status, reward, available_action_set))
+            action = self.agent.observe(status=status, reward=reward, available_action_set=available_action_set)
             if action is None:
                 break
             self.environment.proceed_with_step(action=action)
             status = self.environment.get_status()
             reward = self.environment.get_reward()
-            set_available_action = set(self.environment.get_list_possible_action())
+            available_action_set = set(self.environment.get_list_possible_action())
             self.array_reward[episode_i] += reward
 
     def main(self, is_print_loop_counter=True, is_print_Qtable=False, is_print_action=False):

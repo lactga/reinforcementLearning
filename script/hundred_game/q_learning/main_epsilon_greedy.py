@@ -2,8 +2,7 @@ import random
 
 import numpy as np
 
-from src.multi_armed_bandit.PolicyEpsilonGreedy import PolicyEpsilonGreedy
-from src.reinforcement_agents.AgentQLearning import AgentQLearning
+from src.explorers.EpsilonGreedy import EpsilonGreedy
 from src.reinforcement_environments.HundredGameEnvironment import HundredGameEnvironment
 
 
@@ -20,8 +19,8 @@ class Main:
 
         self.cycle_num = cycle_num
         self.agents = [None] * 2
-        self.agents[0] = AgentQLearning(policy_cls=PolicyEpsilonGreedy(epsilon=epsilon), alpha=0.1, gamma=0.99)
-        self.agents[1] = AgentQLearning(policy_cls=PolicyEpsilonGreedy(epsilon=epsilon), alpha=0.1, gamma=0.99)
+        self.agents[0] = AgentQLearning(policy_cls=EpsilonGreedy(epsilon=epsilon), alpha=0.1, gamma=0.99)
+        self.agents[1] = AgentQLearning(policy_cls=EpsilonGreedy(epsilon=epsilon), alpha=0.1, gamma=0.99)
         self.environment = None
         self.special = special
         self.cards_num = cards_num
@@ -33,26 +32,26 @@ class Main:
         status = self.environment.get_status()
         reward = self.environment.get_reward()
         action = None
-        set_available_action = set(self.environment.get_list_possible_action())
+        available_action_set = set(self.environment.get_list_possible_action())
 
         loop_cnt = episode_i % 2
         while True:
             loop_cnt += 1
             if is_print_action:
-                print('prev_action:{}, status:{}, reward:{}, set_available_action={}'.format(
-                    action, status, reward, set_available_action))
-            action = self.agents[loop_cnt % 2].observe(status=status, reward=reward, set_available_action=set_available_action)
+                print('prev_action:{}, status:{}, reward:{}, available_action_set={}'.format(
+                    action, status, reward, available_action_set))
+            action = self.agents[loop_cnt % 2].observe(status=status, reward=reward, available_action_set=available_action_set)
             if action is None:
                 break
             self.environment.proceed_with_step(action=action)
             status = self.environment.get_status()
             reward = -1 * self.environment.get_reward()
-            set_available_action = set(self.environment.get_list_possible_action())
+            available_action_set = set(self.environment.get_list_possible_action())
             if loop_cnt % 2:
                 self.array_reward[episode_i] += reward
         # 勝者にも学習をさせる
         loop_cnt += 1
-        self.agents[loop_cnt % 2].observe(status=status, reward=-reward, set_available_action=set_available_action)
+        self.agents[loop_cnt % 2].observe(status=status, reward=-reward, available_action_set=available_action_set)
 
     def main(self, is_print_loop_counter=True, is_print_Qtable=False, is_print_action=False):
         for i in range(self.cycle_num):

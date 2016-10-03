@@ -1,6 +1,6 @@
 import random
-from src.AbstractEnvironment import AbstractEnvironment
-from src.utils.Utils import Utils
+
+from src.environments.AbstractEnvironment import AbstractEnvironment
 
 
 class HundredGameEnvironment(AbstractEnvironment):

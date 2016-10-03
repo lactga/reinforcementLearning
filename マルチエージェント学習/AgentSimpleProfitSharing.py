@@ -20,17 +20,17 @@ class AgentSimpleProfitSharing():
         """
         self.list_selected_rule = []
 
-    def observe(self, status, reward, set_available_action):
+    def observe(self, status, reward, available_action_set):
         """
         状態と報酬と可能な行動の集合を観測する
         :param status: 状態
         :param reward: 報酬
-        :param set_available_action: 可能な行動の集合
+        :param available_action_set: 可能な行動の集合
         :return:
         """
         # 現在の状態でのQ値がない場合、Q値の初期値を用意する
         if not status in self.status_map_action_map_qobj:
-            self._init_qobj(status=status, set_available_action=set_available_action)
+            self._init_qobj(status=status, available_action_set=available_action_set)
 
         # 報酬を得た場合、Q値の更新を行う
         if reward and self.list_selected_rule:
@@ -72,16 +72,16 @@ class AgentSimpleProfitSharing():
         self.recent_action = action
         return action
 
-    def _init_qobj(self, status, set_available_action):
+    def _init_qobj(self, status, available_action_set):
         """
         Qオブジェクトを初期化する
         :param status:
-        :param set_available_action:
+        :param available_action_set:
         :return:
         """
         self.status_map_action_map_qobj[status] = {}
         action_map_qobj = self.status_map_action_map_qobj[status]
-        for action in set_available_action:
+        for action in available_action_set:
             action_map_qobj[action] = {'q_value': 0, 'n': 0}
 
     @staticmethod

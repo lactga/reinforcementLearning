@@ -3,10 +3,10 @@ import random
 
 import numpy as np
 
+from src.agents.AgentQTable import AgentQLearning
 from src.multi_armed_bandit.Environment import Environment
 from src.multi_armed_bandit.EstimateQValueWithMean import EstimateQValueWithMean
 from src.multi_armed_bandit.PolicySoftMax import PolicySoftMax
-from src.reinforcement_agents.AgentQLearning import AgentQLearning
 
 
 def do_1_episode(loop_num, temperature, seed):

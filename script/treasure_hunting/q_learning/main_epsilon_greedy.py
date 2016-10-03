@@ -2,9 +2,9 @@ import random
 
 import numpy as np
 
-from src.multi_armed_bandit.PolicyEpsilonGreedy import PolicyEpsilonGreedy
-from src.reinforcement_agents.AgentQLearning import AgentQLearning
-from src.reinforcement_environments.TreasureHuntingEnvironment import TreasureHuntingEnvironment
+from src.agents.AgentQTable import AgentQLearning
+from src.environments.TreasureHuntingEnvironment import TreasureHuntingEnvironment
+from src.explorers.EpsilonGreedy import EpsilonGreedy
 
 
 class Main:
@@ -19,7 +19,7 @@ class Main:
             random.seed(seed)
 
         self.cycle_num = cycle_num
-        self.agent = AgentQLearning(policy_cls=PolicyEpsilonGreedy(epsilon=epsilon), alpha=0.1, gamma=0.99)
+        self.agent = AgentQLearning(policy_cls=EpsilonGreedy(epsilon=epsilon), alpha=0.1, gamma=0.99)
         self.environment = None
         self.reward = reward
         self.p = p
@@ -30,19 +30,19 @@ class Main:
         status = self.environment.get_status()
         reward = self.environment.get_reward()
         action = None
-        set_available_action = set(self.environment.get_list_possible_action())
+        available_action_set = set(self.environment.get_list_possible_action())
 
         while True:
             if is_print_action:
-                print('prev_action:{}, status:{}, reward:{}, set_available_action={}'.format(
-                    action, status, reward, set_available_action))
-            action = self.agent.observe(status=status, reward=reward, set_available_action=set_available_action)
+                print('prev_action:{}, status:{}, reward:{}, available_action_set={}'.format(
+                    action, status, reward, available_action_set))
+            action = self.agent.observe(status=status, reward=reward, available_action_set=available_action_set)
             if action is None:
                 break
             self.environment.proceed_with_step(action=action)
             status = self.environment.get_status()
             reward = self.environment.get_reward()
-            set_available_action = set(self.environment.get_list_possible_action())
+            available_action_set = set(self.environment.get_list_possible_action())
             self.array_reward[episode_i] += reward
 
     def main(self, is_print_loop_counter=True, is_print_Qtable=False, is_print_action=False):

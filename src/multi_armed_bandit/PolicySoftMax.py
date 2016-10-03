@@ -1,10 +1,10 @@
-import random
 import math
-from src.multi_armed_bandit.AbstractPolicy import AbstractPolicy
+
+from src.explorers.AbstractExplorer import AbstractExplorer
 from src.utils.Utils import Utils
 
 
-class PolicySoftMax(AbstractPolicy):
+class PolicySoftMax(AbstractExplorer):
     """
     ソフトマックス戦略のポリシー
     """

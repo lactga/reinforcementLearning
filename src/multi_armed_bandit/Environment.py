@@ -1,5 +1,6 @@
-from src.AbstractEnvironment import AbstractEnvironment
 import random
+
+from src.environments.AbstractEnvironment import AbstractEnvironment
 
 
 class Environment(AbstractEnvironment):

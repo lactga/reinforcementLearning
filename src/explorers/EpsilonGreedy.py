@@ -1,8 +1,8 @@
 import random
-from src.multi_armed_bandit.PolicyGreedy import PolicyGreedy
+from src.explorers.Greedy import Greedy
 
 
-class PolicyEpsilonGreedy(PolicyGreedy):
+class EpsilonGreedy(Greedy):
     """
     ε-グリーディー戦略のポリシー
     """
@@ -17,13 +17,13 @@ class PolicyEpsilonGreedy(PolicyGreedy):
         :return: 行動
         """
         if random.random() < self.epsilon:
-            action = self.select_action_at_random(action_map_qobj)
+            action = self._select_action_at_random(action_map_qobj)
         else:
-            action = self.get_action_with_max_q_value(action_map_qobj)
+            action = self._get_action_with_max_q_value(action_map_qobj)
         return action
 
     @staticmethod
-    def select_action_at_random(action_map_qobj):
+    def _select_action_at_random(action_map_qobj):
         """
         一様乱数により行動を選択
         :return: 行動

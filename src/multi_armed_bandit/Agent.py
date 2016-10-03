@@ -1,4 +1,4 @@
-from src.AbstractAgent import AbstractAgent
+from src.agents.AbstractAgent import AbstractAgent
 
 
 class Agent(AbstractAgent):

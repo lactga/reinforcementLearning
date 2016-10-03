@@ -3,10 +3,10 @@ import random
 
 import numpy as np
 
+from src.agents.AgentQTable import AgentQLearning
+from src.explorers.EpsilonGreedy import EpsilonGreedy
 from src.multi_armed_bandit.Environment import Environment
 from src.multi_armed_bandit.EstimateQValueWithMean import EstimateQValueWithMean
-from src.multi_armed_bandit.PolicyEpsilonGreedy import PolicyEpsilonGreedy
-from src.reinforcement_agents.AgentQLearning import AgentQLearning
 
 
 def do_1_episode(loop_num, epsilon, seed):
@@ -23,7 +23,7 @@ def do_1_episode(loop_num, epsilon, seed):
         action_map_qobj[action] = {'q_value': 0, 'n': 0}
 
     agent = AgentQLearning(estimate_q_value_cls=EstimateQValueWithMean,
-                           policy_cls=PolicyEpsilonGreedy(epsilon=epsilon),
+                           policy_cls=EpsilonGreedy(epsilon=epsilon),
                            action_map_qobj=action_map_qobj)
 
     for i in range(loop_num):
