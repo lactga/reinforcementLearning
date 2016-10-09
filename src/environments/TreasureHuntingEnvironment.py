@@ -9,8 +9,9 @@ class TreasureHuntingEnvironment(AbstractEnvironment):
     def __init__(self, p=0.9, reward_value=10):
         """
         インストラクタ
-        :param p: 思い通りの方向に進める確率
-        :param reward: 報酬額
+
+        :param float p: 思い通りの方向に進める確率(0 <= p <= 1)
+        :param num reward: 報酬額
         """
 
         super().__init__()
@@ -18,7 +19,7 @@ class TreasureHuntingEnvironment(AbstractEnvironment):
         self.current_step_num = 0
         self.current_reward = 0
         self.current_state = '入口'
-        self.current_available_action_set = ['西', '東']
+        self.current_available_action_set = set(['西', '東'])
 
         # 引数を保持(確認用)
         self.p = p
@@ -52,8 +53,8 @@ class TreasureHuntingEnvironment(AbstractEnvironment):
     def perform_action(self, action):
         """
         行動に応じてステップを進め、環境を遷移させ、報酬を発生させ、可能な行動を求める
+
         :param action: エージェントの行動
-        :return: None
         """
         self.current_step_num += 1
 
@@ -71,7 +72,6 @@ class TreasureHuntingEnvironment(AbstractEnvironment):
     def reset(self):
         """
         初期状態に戻す
-        :return:
         """
         self.current_step_num = 0
         self.current_reward = 0

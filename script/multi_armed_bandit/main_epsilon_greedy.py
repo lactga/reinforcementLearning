@@ -50,5 +50,6 @@ def main(epsilon=0.1):
         pickle.dump(array_mean_reward, file=f)
 
 if __name__ == '__main__':
+    main(epsilon=0)
     main(epsilon=0.1)
     main(epsilon=0.01)

@@ -1,33 +1,49 @@
 import numpy as np
+import matplotlib.pyplot as plt
+
 
 class MainClassOnlineQLearning(object):
     """
     オンライン学習型の強化学習のメインクラス
     """
 
-    def __init__(self, environment, agent, main_loop_num):
+    def __init__(self, environment, agent, episode_loop_num, main_loop_num):
+        """
+        インストラクタ
+
+        :param <environment> environment: 環境クラスのインスタンス
+        :param <agent> agent: エージェントクラスのインスタンス
+        :param int episode_loop_num: エピソードの回数
+        :param int main_loop_num: メインループの回数
+        """
         self.environment = environment
         self.agent = agent
+        self.episode_loop_num = episode_loop_num
         self.main_loop_num = main_loop_num
 
-        self.list_reward = []
+        self.array_reward = np.zeros(self.episode_loop_num)
 
     def run_main_loop(self):
         """
         強化学習のメインループを実行
-        :return:
         """
-        for i in range(self.main_loop_num):
-            self.reset_episode()
-            self.run_episode()
-            self.logging()
+        for main_i in range(self.main_loop_num):
+            self.agent.reset_learned_parameters()
+            for episode_i in range(self.episode_loop_num):
+                self.reset_episode()
+                self.run_episode()
+                if main_i == self.main_loop_num - 1:
+                    self.logging(episode=episode_i, is_print=True)
+                else:
+                    self.logging(episode=episode_i, is_print=False)
+            print('main_i:{} '.format(main_i))
 
+        self.array_reward /= self.main_loop_num
         self.print_result()
 
     def reset_episode(self):
         """
         Episodeのリセット
-        :return:
         """
         self.environment.reset()
         self.agent.reset_episode()
@@ -35,7 +51,6 @@ class MainClassOnlineQLearning(object):
     def run_episode(self):
         """
         エピソードタスクの実行
-        :return:
         """
         # 初期状態を観測
         state = self.environment.get_state()
@@ -62,17 +77,30 @@ class MainClassOnlineQLearning(object):
             if not available_action_set:
                 break
 
-    def logging(self):
+    def logging(self, episode, is_print=True):
         """
-        結果の保持と出力
-        :return:
-        """
-        self.list_reward.append(self.agent.cumsum_reward)
+        各ステップの結果の保持と出力
 
-        print(self.agent.state_map_action_map_qobj)
-        print(list(zip(self.agent.list_state_history, self.agent.list_action_history)), self.agent.cumsum_reward)
+        :param int episode: エピソード数
+        :param bool is_print: 表示するか
+        """
+        self.array_reward[episode] += self.agent.cumsum_reward
+
+        if is_print:
+            print(self.agent.state_map_action_map_qobj)
+            print(list(zip(self.agent.list_state_history, self.agent.list_action_history)), self.agent.cumsum_reward)
 
     def print_result(self):
-        print(list(np.cumsum(self.list_reward)))
-        print(list(np.cumsum(self.list_reward) / np.arange(1, 1 + self.main_loop_num)))
+        """
+        メインループの結果の出力
+        """
+        for state, action_map_qobj in self.agent.state_map_action_map_qobj.items():
+            for action, qobj in action_map_qobj.items():
+                print(state, ', ', action, ', ', qobj)
+
+        print(list(self.array_reward))
+        print(self.array_reward.mean())
+
+        plt.plot(range(self.episode_loop_num), self.array_reward)
+        plt.show()
 

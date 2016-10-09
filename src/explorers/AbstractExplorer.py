@@ -10,7 +10,8 @@ class AbstractExplorer(metaclass=ABCMeta):
     def select_action(self, action_map_qobj):
         """
         行動を選択する関数
+
         :param action_map_qobj: 行動をキーとする、Qテーブルオブジェクト
-        :return: 更新後のQ値
+        :return: 選択された行動
         """
         pass

@@ -18,7 +18,8 @@ class AbstractEnvironment(metaclass=ABCMeta):
     def perform_action(self, action):
         """
         行動に応じてステップを進め、環境を遷移させ、報酬を発生させ、可能な行動を求める
-        :return:
+
+        :param action: 行動
         """
         pass
 
@@ -26,7 +27,6 @@ class AbstractEnvironment(metaclass=ABCMeta):
     def reset(self):
         """
         初期状態に戻す
-        :return:
         """
 
     def get_available_action_set(self):

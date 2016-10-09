@@ -1,10 +1,14 @@
 class Sarsa(object):
+    """
+    Sarsaの学習クラス
+    """
 
     def __init__(self, alpha=0.1, gamma=0.99):
         """
         インストラクタ
-        :param alpha: 学習率
-        :param gamma: 割引率
+
+        :param float alpha: 学習率(0 < alpha < 1)
+        :param float gamma: 割引率(0 < gamma < 1)
         """
         self.alpha = alpha
         self.gamma = gamma
@@ -12,8 +16,8 @@ class Sarsa(object):
     def train(self, agent):
         """
         学習を行う
+
         :param agent: エージェント
-        :return:
         """
         if agent.current_state in agent.state_map_action_map_qobj:
             action_map_qobj = agent.state_map_action_map_qobj[agent.current_state]
