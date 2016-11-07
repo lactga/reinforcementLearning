@@ -88,3 +88,12 @@ class AgentQtable(AbstractAgent):
 
     def reset_learned_parameters(self):
         self.state_map_action_map_qobj = {}
+
+    def reset_episode(self):
+        super().reset_episode()
+
+        # すべてのs, aに対して。
+        for state, action_map_qobj in self.state_map_action_map_qobj.items():
+            for action, qobj in action_map_qobj.items():
+                # e(s, a)の初期化
+                qobj.e = 0
